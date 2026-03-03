@@ -1,10 +1,12 @@
 import asyncio
+import os
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import db
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 import re
 import aiohttp
+from aiohttp import web
 import logging
 from aiogram import Bot,Dispatcher,executor,types
 from aiogram.types import InlineKeyboardMarkup,InlineKeyboardButton
@@ -267,10 +269,20 @@ async def limit(message: types.Message):
         await message.answer(f"✅ Discount limit set to {discount_value}%")
     else:
         await message.answer("⚠️ You need to select region first (/start)")
+async def rofl(request):
+    return web.Response(text="LOX")
 async def on_startup(dp):
     scheduler=AsyncIOScheduler()
-    scheduler.add_job(check_discount,"interval",minutes=1)
-    scheduler.start()               
+    scheduler.add_job(check_discount,"interval",days=1)
+    scheduler.start()
+    app=web.Application()
+    app.router.add_get("/",rofl)
+    run=web.AppRunner(app)
+    await run.setup()
+    port=int(os.environ.get("PORT"))
+    site=web.TCPSite(run,"0.0.0.0",port)
+    await site.start()
+    print("started")               
 
 
 
