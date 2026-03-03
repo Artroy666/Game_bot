@@ -2,7 +2,6 @@ asyncio
 apscheduler
 BeautifulSoup4
 fake_useragent
-logging
 aiohttp
 aiogram==2.25
 supabase
