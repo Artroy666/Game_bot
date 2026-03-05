@@ -1,6 +1,7 @@
 import supabase
 from models import Wishlist, User, engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import func
 Session=sessionmaker(bind=engine)
 def user_save(user_id,name,cc,l):
     session=Session()
@@ -62,8 +63,21 @@ def set_discount(user_id, discount_number):
         session.commit()
         return True
     return False
-
-
+def get_usercount():
+    session = Session()
+    return session.query(func.count(User.id))
+def get_gamecount():
+    session = Session()
+    return session.query(func.count(Wishlist.id))
+def get_most_popular_game():
+    session = Session()
+    popular_game=session.query(Wishlist.game_name,func.count(Wishlist.game_id).label("count_")).group_by(Wishlist.game_id,Wishlist.game_name).order_by(func.count(Wishlist.game_id).desc()).first()
+    return {"name": popular_game.game_name,
+            "count":popular_game.count_}
+def get_allstats():
+    return{"users": get_usercount(),
+           "games": get_gamecount(),
+           "populargame": get_most_popular_game()}
 
 
 

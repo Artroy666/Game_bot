@@ -123,6 +123,15 @@ async def start(message: types.Message):
         InlineKeyboardButton("Ukraine-UAH",callback_data="region|ua|ukrainian")
     )
     await message.answer("Hello, pick your region please",reply_markup=keyboard)
+@dp.message_handler(commands=["stats"])
+async def stats(message: types.Message):
+    data=db.get_allstats()
+    text += (
+                f"🔥 <b>Number of users-{data['users']}</b>\n"
+                f"🎮 <s>Number of games in wishlists-{data['games']}</s>\n\n"
+                f"🎮 <s>The most popular game-{data['populargame']}</s>\n\n"
+            )
+    await message.answer(text)
 @dp.callback_query_handler(lambda c:c.data.startswith("region|"))
 async def save_region(call: types.CallbackQuery):
     r,cc,l=call.data.split("|")
@@ -273,7 +282,7 @@ async def rofl(request):
     return web.Response(text="LOX")
 async def on_startup(dp):
     scheduler=AsyncIOScheduler()
-    scheduler.add_job(check_discount,"interval",minutes=16)
+    scheduler.add_job(check_discount,"interval",days=1)
     scheduler.start()
     app=web.Application()
     app.router.add_get("/",rofl)
