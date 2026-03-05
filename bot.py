@@ -273,16 +273,17 @@ async def rofl(request):
     return web.Response(text="LOX")
 async def on_startup(dp):
     scheduler=AsyncIOScheduler()
-    scheduler.add_job(check_discount,"interval",days=1)
+    scheduler.add_job(check_discount,"interval",minutes=16)
     scheduler.start()
     app=web.Application()
     app.router.add_get("/",rofl)
     run=web.AppRunner(app)
     await run.setup()
-    port=int(os.environ.get("PORT"))
+    port=int(os.environ.get("PORT",10000))
     site=web.TCPSite(run,"0.0.0.0",port)
     await site.start()
-    print("started")               
+    print("started") 
+    #думать              
 
 
 
