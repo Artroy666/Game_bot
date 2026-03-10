@@ -65,10 +65,10 @@ def set_discount(user_id, discount_number):
     return False
 def get_usercount():
     session = Session()
-    return session.query(func.count(User.id))
+    return session.query(func.count(User.id)).scalar()
 def get_gamecount():
     session = Session()
-    return session.query(func.count(Wishlist.id))
+    return session.query(func.count(Wishlist.id)).scalar()
 def get_most_popular_game():
     session = Session()
     popular_game=session.query(Wishlist.game_name,func.count(Wishlist.game_id).label("count_")).group_by(Wishlist.game_id,Wishlist.game_name).order_by(func.count(Wishlist.game_id).desc()).first()

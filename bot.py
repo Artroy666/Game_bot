@@ -10,7 +10,7 @@ from aiohttp import web
 import logging
 from aiogram import Bot,Dispatcher,executor,types
 from aiogram.types import InlineKeyboardMarkup,InlineKeyboardButton
-token='8310225907:AAGvLqjogsftKvA-ZTXiKFMhrj6FX_DRGQw'
+token='8680282033:AAHqDXoGbv-r-RoavpzbXgloIiXuoiX4Ngc'
 bot=Bot(token,parse_mode="HTML")
 dp=Dispatcher(bot)
 logging.basicConfig(level=logging.INFO)
@@ -126,10 +126,11 @@ async def start(message: types.Message):
 @dp.message_handler(commands=["stats"])
 async def stats(message: types.Message):
     data=db.get_allstats()
-    text += (
+    text = (
                 f"🔥 <b>Number of users-{data['users']}</b>\n"
-                f"🎮 <s>Number of games in wishlists-{data['games']}</s>\n\n"
-                f"🎮 <s>The most popular game-{data['populargame']}</s>\n\n"
+                f"🎮 Number of games in wishlists-{data['games']}\n\n"
+                f"🎮 The most popular game-{data['populargame']['name']}\n"
+                f"🎮 Number of additions-{data['populargame']['count']}\n\n"
             )
     await message.answer(text)
 @dp.callback_query_handler(lambda c:c.data.startswith("region|"))
