@@ -10,7 +10,7 @@ from aiohttp import web
 import logging
 from aiogram import Bot,Dispatcher,executor,types
 from aiogram.types import InlineKeyboardMarkup,InlineKeyboardButton
-token='7731341035:AAH-IRHTAR7cy13xI6Jo1qQqtzMTFokefjM'
+token='8310225907:AAGvLqjogsftKvA-ZTXiKFMhrj6FX_DRGQw'
 bot=Bot(token,parse_mode="HTML")
 dp=Dispatcher(bot)
 logging.basicConfig(level=logging.INFO)
