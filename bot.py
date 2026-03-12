@@ -9,7 +9,8 @@ import aiohttp
 from aiohttp import web
 import logging
 from aiogram import Bot,Dispatcher,executor,types
-from aiogram.types import InlineKeyboardMarkup,InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup,InlineKeyboardButton,ReplyKeyboardMarkup,KeyboardButton
+from aiogram.types.web_app_info import WebAppInfo
 token='8310225907:AAGvLqjogsftKvA-ZTXiKFMhrj6FX_DRGQw'
 bot=Bot(token,parse_mode="HTML")
 dp=Dispatcher(bot)
@@ -114,15 +115,55 @@ async def test():
     if game_id:
         game = await get_game_by_id(game_id)
         print(game)
+async def api_get_games(request):
+    user_id=request.rel_url.query.get("user_id")
+    games=db.get_wishlist(user_id)
+    return web.json_response(games)
+def help_text():
+    return (
+        "<b>🤖 Game Bot – Commands</b>\n"
+        "━━━━━━━━━━━━━━\n\n"
+
+        "🔎 <b>Search game</b>\n"
+        "Just type the name of any game.\n\n"
+
+        "⭐ <b>/wishlist</b>\n"
+        "Show your wishlist.\n\n"
+
+        "📊 <b>/stats</b>\n"
+        "Bot statistics.\n\n"
+
+        "⚙ <b>/limit [percent]</b>\n"
+        "Set discount notification limit.\n"
+        "Example: <code>/limit 30</code>\n\n"
+
+        "🌍 <b>/start</b>\n"
+        "Select your region.\n\n"
+
+        "💡 <b>How it works</b>\n"
+        "1️⃣ Search a game\n"
+        "2️⃣ Add it to wishlist\n"
+        "3️⃣ Get notified when discount appears 🔥"
+    )
 @dp.message_handler(commands=["start"])
 async def start(message: types.Message):
-    keyboard=InlineKeyboardMarkup()
+    keyboard = InlineKeyboardMarkup()
     keyboard.add(
         InlineKeyboardButton("Europa-EUR",callback_data="region|de|english"),
         InlineKeyboardButton("America-USD",callback_data="region|us|english"),
         InlineKeyboardButton("Ukraine-UAH",callback_data="region|ua|ukrainian")
     )
-    await message.answer("Hello, pick your region please",reply_markup=keyboard)
+
+    await message.answer(
+        "👋 <b>Welcome to Steam Wishlist Bot</b>\n\n"
+        "First choose your region:",
+        reply_markup=keyboard
+    )
+
+    await message.answer(help_text())
+@dp.message_handler(commands=["help"])
+async def help_command(message: types.Message):
+    await message.answer(help_text())
 @dp.message_handler(commands=["stats"])
 async def stats(message: types.Message):
     data=db.get_allstats()
@@ -279,20 +320,30 @@ async def limit(message: types.Message):
         await message.answer(f"✅ Discount limit set to {discount_value}%")
     else:
         await message.answer("⚠️ You need to select region first (/start)")
+@dp.message_handler(commands=["app"])
+async def app_open(message: types.Message):
+    url="https://game-bot-112i.onrender.com"
+    keybord=ReplyKeyboardMarkup()
+    button=KeyboardButton(text="🔥New format app!🔥",web_app=WebAppInfo(url=url))
+    keybord.add(button)
+    await message.answer("🔥Press button for new goated format🔥",reply_markup=keybord)
 async def rofl(request):
-    return web.Response(text="LOX")
+    with open("bot.html","r",encoding="UTF-8") as page:
+        content=page.read()
+    return web.Response(text=content,content_type="text/html")
 async def on_startup(dp):
     scheduler=AsyncIOScheduler()
     scheduler.add_job(check_discount,"interval",days=1)
     scheduler.start()
     app=web.Application()
-    app.router.add_get("/",rofl)
+    app.router.add_get("/",)
     run=web.AppRunner(app)
     await run.setup()
     port=int(os.environ.get("PORT",10000))
     site=web.TCPSite(run,"0.0.0.0",port)
     await site.start()
     print("started") 
+
     #думать              
 
 

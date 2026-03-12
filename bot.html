@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game_bot</title>
+</head>
+<body>
+<h1>My steam games</h1>
+<div id="games">
+    <div id="loader">Loading games...</div>
+    <script>
+        var tg=window.Telegram.WebApp;
+        tg.expand();
+        async function load_games() {
+            const user=tg.initDataUnsafe.user;
+            const games_div=document.getElementById("games");
+            const loader_div=document.getElementById("loader");
+            try{
+            const response=await fetch(`/api/games?user_id=${user.id}`);
+            const games=await response.json();
+            loader.style.display="none"
+            games.forEach(game => {
+              const card=document.createElement("div");
+              card.innerHTML=`${game.game_name}`
+              games_div.appendChild(card)
+                
+            });
+            }catch(error){console.error(error)}
+            
+        } 
+        load_games()
+        
+    </script>
+</div>    
+</body>
+</html>

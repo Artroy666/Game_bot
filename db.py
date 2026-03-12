@@ -78,6 +78,7 @@ def get_allstats():
     return{"users": get_usercount(),
            "games": get_gamecount(),
            "populargame": get_most_popular_game()}
+#Сделать вывод всех команд при /start и попытатся доделать mini-app
 
 
 
