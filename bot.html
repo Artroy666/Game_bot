@@ -19,8 +19,9 @@
             const loader_div=document.getElementById("loader");
             try{
             const response=await fetch(`/api/games?user_id=${user.id}`);
+            console.log(user.id)
             const games=await response.json();
-            loader.style.display="none"
+            loader_div.style.display="none"
             games.forEach(game => {
               const card=document.createElement("div");
               card.innerHTML=`${game.game_name}`
@@ -31,7 +32,7 @@
             
         } 
         load_games()
-        
+
     </script>
 </div>    
 </body>
