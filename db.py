@@ -78,6 +78,16 @@ def get_allstats():
     return{"users": get_usercount(),
            "games": get_gamecount(),
            "populargame": get_most_popular_game()}
+def get_wishlist_api(user_id):
+    session=Session()
+    user = session.query(User).filter_by(id=user_id).first()
+    games = session.query(Wishlist).filter_by(user_id=user.id).all()
+    result=[]
+    for i in games:
+        result.append({
+            "game_name":i.game_name          
+        })
+    return result
 #Сделать вывод всех команд при /start и попытатся доделать mini-app
 
 

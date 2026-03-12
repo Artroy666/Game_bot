@@ -117,7 +117,7 @@ async def test():
         print(game)
 async def api_get_games(request):
     user_id=request.rel_url.query.get("user_id")
-    games=db.get_wishlist(user_id)
+    games=db.get_wishlist_api(user_id)
     return web.json_response(games)
 def help_text():
     return (
